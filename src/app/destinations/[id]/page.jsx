@@ -1,9 +1,9 @@
+import { EditForm } from "@/components/Destination/EditForm";
 import { getDestinationById } from "@/lib/ServerActions/data";
 import Image from "next/image";
 import Link from "next/link";
 import {
   FiArrowLeft,
-  FiEdit2,
   FiXCircle,
   FiMapPin,
   FiStar,
@@ -14,7 +14,9 @@ import {
   FiShield,
   FiPhone,
 } from "react-icons/fi";
-
+import { Updatedestination } from "@/lib/ServerActions/action";
+import DeleteDestinationBbtn from "@/components/Destination/DeleteDestinationBbtn";
+import { Deletedestination } from "@/lib/ServerActions/action";
 async function DestinationDetailsPage({ params }) {
   const { id } = await params;
   const data = await getDestinationById(id);
@@ -39,14 +41,13 @@ async function DestinationDetailsPage({ params }) {
           Back to Destinations
         </Link>
         <div className="flex items-center gap-2">
-          <button className="flex items-center gap-1.5 text-sm border border-gray-300 text-gray-600 px-3 py-1.5 rounded-lg hover:bg-gray-50 transition">
-            <FiEdit2 size={13} />
-            Edit
-          </button>
-          <button className="flex items-center gap-1.5 text-sm border border-red-200 text-red-500 px-3 py-1.5 rounded-lg hover:bg-red-50 transition">
-            <FiXCircle size={13} />
-            Cancel
-          </button>
+          {/* edit modal  */}
+          <EditForm data={data} Updatedestination={Updatedestination} />
+
+          <DeleteDestinationBbtn
+            id={data._id}
+            Deletedestination={Deletedestination}
+          />
         </div>
       </div>
 
