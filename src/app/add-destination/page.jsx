@@ -13,7 +13,7 @@ import React from "react";
 
 function addDestination() {
   return (
-    <div>
+    <div className=" max-w-5xl mx-auto">
       <h1 className="text-center text-3xl">Add A New Destination </h1>
       <form action={AddDestination} className="p-10 space-y-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">

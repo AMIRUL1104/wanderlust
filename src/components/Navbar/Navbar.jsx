@@ -18,7 +18,7 @@ import {
 
 const mainLinks = [
   { href: "/", label: "Home", icon: IoHomeOutline },
-  { href: "/destination", label: "Destination", icon: IoCompassOutline },
+  { href: "/destinations", label: "Destination", icon: IoCompassOutline },
   { href: "/my-booking", label: "My Booking", icon: IoCalendarOutline },
   { href: "/admin", label: "Admin", icon: IoShieldCheckmarkOutline },
 ];
