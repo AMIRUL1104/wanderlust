@@ -1,8 +1,7 @@
 import DestinationCard from "@/components/Destination/DestinationCard";
 import getDestinations from "@/lib/ServerActions/data";
-import Image from "next/image";
 
-async function DestinationsPage() {
+export default async function DestinationsPage() {
   const destinations = await getDestinations();
 
   return (
@@ -59,5 +58,3 @@ async function DestinationsPage() {
     </div>
   );
 }
-
-export default DestinationsPage;

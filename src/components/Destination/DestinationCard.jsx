@@ -51,7 +51,7 @@ function DestinationCard({ destination }) {
         {/* detail button for booking */}
         <Link
           className=" hover:underline text-cyan-500 "
-          href={`/destination/${destination._id}`}
+          href={`/destinations/${destination._id}`}
         >
           Book Now
         </Link>
