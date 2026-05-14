@@ -109,7 +109,10 @@ async function DestinationDetailsPage({ params }) {
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 {data.highlights.map((item, i) => (
-                  <div key={i} className="flex items-start gap-2 text-sm text-gray-600">
+                  <div
+                    key={i}
+                    className="flex items-start gap-2 text-sm text-gray-600"
+                  >
                     <FiCheckCircle
                       size={15}
                       className="text-cyan-500 mt-0.5 shrink-0"
@@ -117,6 +120,38 @@ async function DestinationDetailsPage({ params }) {
                     {item}
                   </div>
                 ))}
+              </div>
+            </div>
+          )}
+
+          {/* Itinerary */}
+          {data.itinerary?.length > 0 && (
+            <div>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                Itinerary
+              </h2>
+              <div className="relative">
+                {/* Vertical line */}
+                <div className="absolute left-4 top-0 bottom-0 w-px bg-gray-200" />
+
+                <div className="space-y-4">
+                  {data.itinerary.map((item, i) => (
+                    <div key={i} className="relative flex gap-4 pl-12">
+                      {/* Step circle */}
+                      <div className="absolute left-0 flex items-center justify-center w-8 h-8 rounded-full bg-cyan-500 text-white text-xs font-bold shrink-0 z-10">
+                        {item.day}
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1 bg-gray-50 border border-gray-100 rounded-xl px-4 py-3">
+                        <p className="text-xs font-semibold text-cyan-600 mb-0.5">
+                          Day {item.day}
+                        </p>
+                        <p className="text-sm text-gray-700">{item.activity}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
           )}
@@ -128,9 +163,7 @@ async function DestinationDetailsPage({ params }) {
             {/* Price */}
             <div>
               <p className="text-xs text-gray-400 mb-0.5">Starting from</p>
-              <p className="text-3xl font-bold text-cyan-500">
-                ${data.price}
-              </p>
+              <p className="text-3xl font-bold text-cyan-500">${data.price}</p>
               <p className="text-xs text-gray-400">per person</p>
             </div>
 
@@ -156,7 +189,10 @@ async function DestinationDetailsPage({ params }) {
                 { icon: FiShield, text: "Travel insurance included" },
                 { icon: FiPhone, text: "24/7 customer support" },
               ].map(({ icon: Icon, text }) => (
-                <div key={text} className="flex items-center gap-2 text-xs text-gray-500">
+                <div
+                  key={text}
+                  className="flex items-center gap-2 text-xs text-gray-500"
+                >
                   <Icon size={13} className="text-green-500 shrink-0" />
                   {text}
                 </div>
