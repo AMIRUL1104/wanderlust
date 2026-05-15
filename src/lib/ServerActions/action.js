@@ -74,12 +74,36 @@ export async function Updatedestination(id, formData) {
 export async function Deletedestination(destinationId) {
   "use server";
 
-  const req = await fetch(
-    `http://localhost:4000/destination/${destinationId}`,
-    {
-      method: "DELETE",
-    },
-  );
+  try {
+    if (!destinationId) {
+      return { error: "Destination ID is required", deletedCount: 0 };
+    }
 
-  return await req.json();
+    const res = await fetch(
+      `http://localhost:4000/destination/${destinationId}`,
+      {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    if (!res.ok) {
+      return {
+        error: `Failed to delete destination: ${res.statusText}`,
+        deletedCount: 0,
+      };
+    }
+
+    const result = await res.json();
+
+    return {
+      ...result,
+      deletedCount: result.deletedCount || 0,
+    };
+  } catch (error) {
+    console.error("Delete error:", error);
+    return { error: "Something went wrong while deleting!", deletedCount: 0 };
+  }
 }
