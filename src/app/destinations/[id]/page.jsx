@@ -17,9 +17,21 @@ import {
 import { Updatedestination } from "@/lib/ServerActions/action";
 import DeleteDestinationBbtn from "@/components/Destination/DeleteDestinationBbtn";
 import { Deletedestination } from "@/lib/ServerActions/action";
+import BookingButton from "@/components/Booking/BookingButton";
 async function DestinationDetailsPage({ params }) {
   const { id } = await params;
   const data = await getDestinationById(id);
+
+  // keep some data in a object to pass booking page . name,price,image,departure date, duration, country ,booking id,
+  const bookingData = {
+    name: data.destinationName,
+    price: data.price,
+    image: data.imageUrl,
+    departureDate: data.departureDate,
+    duration: data.duration,
+    country: data.country,
+    bookingId: data._id,
+  };
 
   if (!data) {
     return (
@@ -179,9 +191,10 @@ async function DestinationDetailsPage({ params }) {
             </div>
 
             {/* Book Button */}
-            <button className="w-full flex items-center justify-center gap-2 bg-cyan-500 hover:bg-cyan-600 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors">
+            {/* <button className="w-full flex items-center justify-center gap-2 bg-cyan-500 hover:bg-cyan-600 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors">
               Book Now <FiArrowRight size={15} />
-            </button>
+            </button> */}
+            <BookingButton bookingData={bookingData} />
 
             {/* Perks */}
             <div className="space-y-2 pt-1">

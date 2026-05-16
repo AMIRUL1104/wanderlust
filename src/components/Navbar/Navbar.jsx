@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { redirect, usePathname } from "next/navigation";
 
 import { HiOutlineMenuAlt3, HiX } from "react-icons/hi";
 import {
@@ -15,6 +15,10 @@ import {
   IoLogInOutline,
   IoPersonAddOutline,
 } from "react-icons/io5";
+import { authClient } from "@/lib/auth-client";
+import { BiUserCircle } from "react-icons/bi";
+import { Spinner } from "@heroui/react";
+import { Bounce, toast } from "react-toastify";
 
 const mainLinks = [
   { href: "/", label: "Home", icon: IoHomeOutline },
@@ -28,6 +32,10 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const pathname = usePathname();
   const menuRef = useRef(null);
+
+  // login sesion  info
+  const { data: session, isPending } = authClient.useSession();
+  const userInfo = session?.user;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 20);
@@ -117,37 +125,53 @@ export default function Navbar() {
 
             {/* ── Right nav (desktop) ── */}
             <nav className="hidden lg:flex items-center gap-1">
-              <Link
-                href="/profile"
-                className={`relative flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium tracking-wide transition-colors duration-200 group
-                  ${isActive("/profile") ? "text-cyan-400" : "text-blue-200/70 hover:text-cyan-300"}`}
-              >
-                <IoPersonOutline className="text-base" />
-                Profile
-                <span
-                  className={`absolute bottom-0 left-3.5 right-3.5 h-px bg-cyan-400 transition-all duration-300 origin-left ${isActive("/profile") ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"}`}
-                />
-              </Link>
-
-              <Link
-                href="/login"
-                className={`relative flex items-center gap-1.5 px-3.5 py-2 text-sm font-medium tracking-wide transition-colors duration-200 group
-                  ${isActive("/login") ? "text-cyan-400" : "text-blue-200/70 hover:text-cyan-300"}`}
-              >
-                <IoLogInOutline className="text-base" />
-                Login
-                <span
-                  className={`absolute bottom-0 left-3.5 right-3.5 h-px bg-cyan-400 transition-all duration-300 origin-left ${isActive("/login") ? "scale-x-100" : "scale-x-0 group-hover:scale-x-100"}`}
-                />
-              </Link>
-
-              <Link
-                href="/signup"
-                className="flex items-center gap-1.5 ml-2 px-4 py-2 text-sm font-medium tracking-wide bg-cyan-500 hover:bg-cyan-400 text-[#042c53] transition-colors duration-200"
-              >
-                <IoPersonAddOutline className="text-base" />
-                Sign Up
-              </Link>
+              {/* Sign In */}
+              {isPending ? (
+                <div className="flex  items-center gap-2">
+                  <Spinner size="lg" />
+                  <span className="text-base text-cyan-400 font-medium">
+                    Loading...
+                  </span>
+                </div>
+              ) : userInfo ? (
+                <div className="flex items-center justify-between gap-4 ">
+                  <Link href={"/profile"}>
+                    <BiUserCircle className="text-4xl text-cyan-400" />
+                  </Link>
+                  <button
+                    onClick={async () => {
+                      const result = await authClient.signOut();
+                      if (result.data) {
+                        redirect("/");
+                      }
+                      toast.success("Sign Out Successfully", {
+                        position: "top-right",
+                        autoClose: 3000,
+                        hideProgressBar: true,
+                        closeOnClick: true,
+                        pauseOnHover: false,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "light",
+                        transition: Bounce,
+                      });
+                    }}
+                    className=" rounded-lgflex items-center gap-1.5 ml-2 px-4 py-2 text-sm font-medium tracking-wide bg-cyan-500 hover:bg-cyan-400 text-[#042c53] transition-colors duration-200"
+                  >
+                    Sign out
+                  </button>
+                </div>
+              ) : (
+                <div className="flex items-center justify-between gap-4 ">
+                  <Link
+                    href="/login"
+                    className="flex items-center gap-1.5 ml-2 px-4 py-2 text-sm font-medium tracking-wide bg-cyan-500 hover:bg-cyan-400 text-[#042c53] transition-colors duration-200"
+                  >
+                    <IoLogInOutline className="text-base" />
+                    Sign In
+                  </Link>
+                </div>
+              )}
             </nav>
 
             {/* ── Hamburger (mobile/tablet) ── */}

@@ -159,34 +159,37 @@ function StrengthBar({ password }) {
     if (/[^A-Za-z0-9]/.test(password)) s++;
     return s;
   })();
-  const colors = ["", "#ef4444", "#f97316", "#eab308", "#06b6d4", "#0891b2"];
+
+  const tailwindColors = [
+    "",
+    "bg-red-500 text-red-500",
+    "bg-orange-500 text-orange-500",
+    "bg-yellow-500 text-yellow-500",
+    "bg-cyan-500 text-cyan-500",
+    "bg-cyan-600 text-cyan-600",
+  ];
+
   const labels = ["", "Weak", "Fair", "Good", "Strong", "Very Strong"];
   if (!password) return null;
+
   return (
-    <div style={{ marginTop: 6 }}>
-      <div style={{ display: "flex", gap: 3 }}>
+    <div className="mt-1.5">
+      <div className="flex gap-1">
         {[1, 2, 3, 4, 5].map((i) => (
           <div
             key={i}
-            style={{
-              flex: 1,
-              height: 2,
-              background: i <= score ? colors[score] : "rgba(6,182,212,0.12)",
-              transition: "background 0.3s",
-            }}
+            className={`flex-1 h-0.5 transition-colors duration-300 ${
+              i <= score
+                ? tailwindColors[score].split(" ")[0]
+                : "bg-cyan-500/12"
+            }`}
           />
         ))}
       </div>
       <span
-        style={{
-          fontSize: 10.5,
-          color: colors[score],
-          fontWeight: 600,
-          letterSpacing: "0.07em",
-          textTransform: "uppercase",
-          marginTop: 3,
-          display: "block",
-        }}
+        className={`block text-[10.5px] font-semibold tracking-wider uppercase mt-1 ${
+          tailwindColors[score].split(" ")[1]
+        }`}
       >
         {labels[score]}
       </span>
@@ -197,36 +200,11 @@ function StrengthBar({ password }) {
 /* ── stat pill ────────────────────────────────────────────────────────────── */
 function StatPill({ value, label }) {
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        padding: "10px 20px",
-        background: "rgba(6,182,212,0.08)",
-        border: "1px solid rgba(6,182,212,0.2)",
-      }}
-    >
-      <span
-        style={{
-          fontSize: 22,
-          fontWeight: 700,
-          color: "#22d3ee",
-          fontFamily: "'Playfair Display', serif",
-          lineHeight: 1,
-        }}
-      >
+    <div className="flex flex-col items-center py-2.5 px-5 bg-cyan-500/[0.08] border border-cyan-500/20">
+      <span className="text-[22px] font-bold text-cyan-400 font-serif leading-none">
         {value}
       </span>
-      <span
-        style={{
-          fontSize: 10,
-          color: "rgba(186,230,253,0.5)",
-          letterSpacing: "0.1em",
-          textTransform: "uppercase",
-          marginTop: 3,
-        }}
-      >
+      <span className="text-[10px] text-sky-200/50 tracking-widest uppercase mt-0.5">
         {label}
       </span>
     </div>
@@ -236,37 +214,11 @@ function StatPill({ value, label }) {
 /* ── destination card ─────────────────────────────────────────────────────── */
 function DestCard({ emoji, name, country }) {
   return (
-    <div
-      style={{
-        display: "flex",
-        alignItems: "center",
-        gap: 10,
-        padding: "8px 14px",
-        background: "rgba(6,182,212,0.06)",
-        border: "1px solid rgba(6,182,212,0.15)",
-        backdropFilter: "blur(4px)",
-      }}
-    >
-      <span style={{ fontSize: 20 }}>{emoji}</span>
+    <div className="flex items-center gap-2.5 py-2 px-3.5 bg-cyan-500/[0.06] border border-cyan-500/15 backdrop-blur-[4px]">
+      <span className="text-[20px]">{emoji}</span>
       <div>
-        <div
-          style={{
-            fontSize: 12,
-            fontWeight: 600,
-            color: "rgba(186,230,253,0.85)",
-          }}
-        >
-          {name}
-        </div>
-        <div
-          style={{
-            fontSize: 10,
-            color: "rgba(186,230,253,0.4)",
-            display: "flex",
-            alignItems: "center",
-            gap: 3,
-          }}
-        >
+        <div className="text-[12px] font-semibold text-sky-200/85">{name}</div>
+        <div className="text-[10px] text-sky-200/40 flex items-center gap-0.5">
           <IconMapPin />
           {country}
         </div>
@@ -287,13 +239,12 @@ export default function WanderlustSignup() {
     console.log(userInfo);
 
     const { data, error } = await authClient.signUp.email({
-      name: name, // required
-      email: email, // required
-      password: password, // required
+      name: name,
+      email: email,
+      password: password,
     });
 
     if (data) {
-      // console.log("signup successfull");
       redirect("/login");
     }
     if (error) {
@@ -302,326 +253,46 @@ export default function WanderlustSignup() {
   };
 
   return (
-    <>
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,600&family=Outfit:wght@300;400;500;600&display=swap');
-
-        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-          background: #04151f;
-          font-family: 'Outfit', sans-serif;
-          min-height: 100vh;
-        }
-
-        .page {
-          min-height: 100vh;
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-        }
-
-        /* ── LEFT ── */
-        .left {
-          position: relative;
-          background: linear-gradient(160deg, #042c53 0%, #0a2a3a 50%, #04151f 100%);
-          overflow: hidden;
-          display: flex;
-          flex-direction: column;
-          justify-content: space-between;
-          padding: 48px 52px;
-        }
-
-        /* grid overlay */
-        .left::before {
-          content: '';
-          position: absolute; inset: 0;
-          background-image:
-            linear-gradient(rgba(6,182,212,0.06) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(6,182,212,0.06) 1px, transparent 1px);
-          background-size: 48px 48px;
-          pointer-events: none;
-        }
-        /* glow */
-        .left::after {
-          content: '';
-          position: absolute;
-          width: 600px; height: 600px;
-          border-radius: 50%;
-          background: radial-gradient(circle, rgba(6,182,212,0.14) 0%, transparent 65%);
-          bottom: -200px; right: -200px;
-          pointer-events: none;
-        }
-
-        .brand {
-          display: flex; align-items: center; gap: 10px;
-          z-index: 1;
-        }
-        .brand-icon {
-          width: 36px; height: 36px;
-          background: linear-gradient(135deg, #06b6d4, #0891b2);
-          display: flex; align-items: center; justify-content: center;
-          color: #04151f;
-        }
-        .brand-name {
-          font-family: 'Playfair Display', serif;
-          font-size: 22px;
-          color: #fff;
-          letter-spacing: 0.03em;
-        }
-        .brand-name span { color: #22d3ee; }
-
-        .hero { z-index: 1; }
-        .hero-eyebrow {
-          display: flex; align-items: center; gap: 8px;
-          margin-bottom: 18px;
-        }
-        .eyebrow-line { width: 32px; height: 1px; background: #06b6d4; }
-        .eyebrow-text {
-          font-size: 11px; font-weight: 500;
-          color: #22d3ee;
-          letter-spacing: 0.18em; text-transform: uppercase;
-        }
-        .hero-title {
-          font-family: 'Playfair Display', serif;
-          font-size: clamp(34px, 3.2vw, 52px);
-          line-height: 1.12;
-          color: #fff;
-          margin-bottom: 18px;
-        }
-        .hero-title em {
-          font-style: italic;
-          color: #22d3ee;
-          display: block;
-        }
-        .hero-desc {
-          font-size: 14px;
-          color: rgba(186,230,253,0.5);
-          line-height: 1.75;
-          font-weight: 300;
-          max-width: 360px;
-          margin-bottom: 32px;
-        }
-
-        .stats {
-          display: flex; gap: 2px;
-          margin-bottom: 36px;
-        }
-
-        .dest-grid {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 2px;
-        }
-
-        /* ── RIGHT ── */
-        .right {
-          background: #0a1929;
-          display: flex; align-items: center; justify-content: center;
-          padding: 48px 40px;
-          border-left: 1px solid rgba(6,182,212,0.1);
-        }
-
-        .form-card {
-          width: 100%;
-          max-width: 400px;
-        }
-
-        .form-header { margin-bottom: 28px; }
-        .form-header h2 {
-          font-family: 'Playfair Display', serif;
-          font-size: 28px;
-          color: #fff;
-          letter-spacing: -0.01em;
-          margin-bottom: 6px;
-        }
-        .form-header h2 span { color: #22d3ee; font-style: italic; }
-        .form-header p {
-          font-size: 13px;
-          color: rgba(186,230,253,0.4);
-          font-weight: 300;
-        }
-        .form-header p a {
-          color: #22d3ee; text-decoration: none; font-weight: 500;
-        }
-        .form-header p a:hover { text-decoration: underline; }
-
-        /* google btn */
-        .google-btn {
-          width: 100%;
-          display: flex; align-items: center; justify-content: center; gap: 10px;
-          padding: 11px 20px;
-          background: rgba(6,182,212,0.05);
-          border: 1px solid rgba(6,182,212,0.2);
-          color: rgba(186,230,253,0.75);
-          font-size: 13px; font-weight: 500;
-          font-family: 'Outfit', sans-serif;
-          cursor: pointer;
-          transition: all 0.18s;
-          margin-bottom: 24px;
-        }
-        .google-btn:hover {
-          background: rgba(6,182,212,0.1);
-          border-color: rgba(6,182,212,0.4);
-          color: #fff;
-        }
-
-        .divider {
-          display: flex; align-items: center; gap: 10px;
-          margin-bottom: 24px;
-        }
-        .div-line { flex: 1; height: 1px; background: rgba(6,182,212,0.12); }
-        .div-text {
-          font-size: 11px; color: rgba(186,230,253,0.25);
-          letter-spacing: 0.1em; text-transform: uppercase;
-        }
-
-        /* section label */
-        .section-label {
-          font-size: 10px; font-weight: 600;
-          color: rgba(6,182,212,0.5);
-          letter-spacing: 0.14em; text-transform: uppercase;
-          margin-bottom: 16px;
-        }
-
-        .field-group { display: flex; flex-direction: column; gap: 14px; }
-
-        .field { display: flex; flex-direction: column; gap: 5px; }
-
-        label {
-          font-size: 12px; font-weight: 500;
-          color: rgba(186,230,253,0.55);
-          display: flex; align-items: center; gap: 3px;
-        }
-        label .req { color: #06b6d4; }
-
-        .input-wrap { position: relative; display: flex; align-items: center; }
-        .in-icon {
-          position: absolute; left: 12px;
-          color: rgba(6,182,212,0.4);
-          display: flex; pointer-events: none;
-        }
-        input[type=text], input[type=email], input[type=password] {
-          width: 100%;
-          padding: 10px 12px 10px 36px;
-          background: rgba(6,182,212,0.05);
-          border: 1px solid rgba(6,182,212,0.15);
-          color: #e0f2fe;
-          font-size: 13.5px;
-          font-family: 'Outfit', sans-serif;
-          font-weight: 400;
-          outline: none;
-          transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
-          border-radius: 0;
-        }
-        input::placeholder { color: rgba(186,230,253,0.18); }
-        input:focus {
-          border-color: rgba(6,182,212,0.55);
-          background: rgba(6,182,212,0.08);
-          box-shadow: 0 0 0 3px rgba(6,182,212,0.1);
-        }
-        .eye-toggle {
-          position: absolute; right: 12px;
-          background: none; border: none;
-          color: rgba(6,182,212,0.3);
-          cursor: pointer; display: flex; padding: 0;
-          transition: color 0.15s;
-        }
-        .eye-toggle:hover { color: #22d3ee; }
-
-        .field-hint {
-          font-size: 11px; color: rgba(186,230,253,0.25); line-height: 1.5;
-        }
-
-        /* terms */
-        .terms {
-          margin-top: 18px;
-          display: flex; align-items: flex-start; gap: 9px;
-          font-size: 12px; color: rgba(186,230,253,0.35); line-height: 1.5;
-        }
-        .terms input[type=checkbox] {
-          width: 14px; min-width: 14px; height: 14px;
-          padding: 0; margin-top: 2px;
-          accent-color: #06b6d4;
-        }
-        .terms a { color: #22d3ee; text-decoration: none; }
-        .terms a:hover { text-decoration: underline; }
-
-        /* submit */
-        .submit-btn {
-          margin-top: 22px;
-          width: 100%;
-          display: flex; align-items: center; justify-content: center; gap: 9px;
-          padding: 13px 24px;
-          background: #06b6d4;
-          border: none;
-          color: #042c53;
-          font-size: 13px; font-weight: 700;
-          font-family: 'Outfit', sans-serif;
-          letter-spacing: 0.1em; text-transform: uppercase;
-          cursor: pointer;
-          transition: all 0.2s;
-        }
-        .submit-btn:hover {
-          background: #22d3ee;
-          transform: translateY(-1px);
-          box-shadow: 0 6px 24px rgba(6,182,212,0.3);
-        }
-        .submit-btn:active { transform: none; }
-
-        .security-note {
-          display: flex; align-items: center; justify-content: center; gap: 5px;
-          margin-top: 16px;
-          font-size: 11px; color: rgba(186,230,253,0.2);
-        }
-        .security-note svg { opacity: 0.45; }
-
-        /* ── responsive ── */
-        @media (max-width: 820px) {
-          .page { grid-template-columns: 1fr; }
-          .left { display: none; }
-          .right {
-            padding: 40px 20px;
-            align-items: flex-start;
-            padding-top: 60px;
-            min-height: 100vh;
-          }
-        }
-      `}</style>
-
-      <div className="page">
+    <div className="bg-[#04151f] font-sans min-h-screen antialiased selection:bg-cyan-500/30">
+      <div className="min-h-screen grid grid-cols-1 md:grid-cols-2">
         {/* ═══ LEFT ═══ */}
-        <div className="left">
-          <div className="brand">
-            <div className="brand-icon">
+        <div className="relative hidden md:flex flex-col justify-between p-12 bg-gradient-to-br from-[#042c53] via-[#0a2a3a] to-[#04151f] overflow-hidden before:content-[''] before:absolute before:inset-0 before:bg-[linear-gradient(rgba(6,182,212,0.06)_1px,transparent_1px),linear-gradient(90deg,rgba(6,182,212,0.06)_1px,transparent_1px)] before:bg-[size:48px_48px] before:pointer-events-none after:content-[''] after:absolute after:w-[600px] after:h-[600px] after:rounded-full after:bg-[radial-gradient(circle,rgba(6,182,212,0.14)_0%,transparent_65%)] after:-bottom-[200px] after:-right-[200px] after:pointer-events-none">
+          <div className="flex items-center gap-2.5 z-10">
+            <div className="w-9 h-9 bg-gradient-to-br from-cyan-500 to-cyan-600 flex items-center justify-center text-[#04151f]">
               <IconCompass />
             </div>
-            <span className="brand-name">
-              Wander<span>last</span>
+            <span className="font-serif text-[22px] text-white tracking-wide">
+              Wander<span className="text-cyan-400">last</span>
             </span>
           </div>
 
-          <div className="hero">
-            <div className="hero-eyebrow">
-              <div className="eyebrow-line" />
-              <span className="eyebrow-text">Your journey begins here</span>
+          <div className="z-10">
+            <div className="flex items-center gap-2 mb-4.5">
+              <div className="w-8 h-px bg-cyan-500" />
+              <span className="text-[11px] font-medium text-cyan-400 tracking-[0.18em] uppercase">
+                Your journey begins here
+              </span>
             </div>
-            <h1 className="hero-title">
+            <h1 className="font-serif text-4xl lg:text-5xl text-white leading-[1.12] mb-4.5">
               Discover Your
               <br />
-              <em>Next Adventure</em>
+              <em className="not-italic text-cyan-400 block mt-1">
+                Next Adventure
+              </em>
             </h1>
-            <p className="hero-desc">
+            <p className="text-[14px] text-sky-200/50 leading-relaxed font-light max-w-[360px] mb-8">
               Explore breathtaking destinations and create unforgettable
               memories with our curated travel experiences. Join thousands of
               explorers worldwide.
             </p>
 
-            <div className="stats">
+            <div className="flex gap-[2px] mb-9">
               <StatPill value="40K+" label="Travelers" />
               <StatPill value="120+" label="Destinations" />
               <StatPill value="4.9★" label="Rating" />
             </div>
 
-            <div className="dest-grid">
+            <div className="grid grid-cols-2 gap-[2px]">
               <DestCard emoji="🏔️" name="Banff" country="Canada" />
               <DestCard emoji="🏛️" name="Santorini" country="Greece" />
               <DestCard emoji="🌿" name="Bali" country="Indonesia" />
@@ -634,38 +305,55 @@ export default function WanderlustSignup() {
         </div>
 
         {/* ═══ RIGHT ═══ */}
-        <div className="right">
-          <form action={handleFormAction} className="form-card">
-            <div className="form-header">
-              <h2>
-                Start <span>Exploring</span>
+        <div className="bg-[#0a1929] flex items-center justify-center p-5 sm:p-10 md:p-12 border-t md:border-t-0 md:border-l border-cyan-500/10 min-h-screen">
+          <form action={handleFormAction} className="w-100 max-w-[400px]">
+            <div className="mb-7">
+              <h2 className="font-serif text-3xl text-white tracking-tight mb-1.5">
+                Start{" "}
+                <span className="text-cyan-400 not-italic">Exploring</span>
               </h2>
-              <p>
-                Already a traveler? <a href="#">Sign in</a>
+              <p className="text-[13px] text-sky-200/40 font-light">
+                Already a traveler?{" "}
+                <a
+                  href="#"
+                  className="text-cyan-400 font-medium hover:underline"
+                >
+                  Sign in
+                </a>
               </p>
             </div>
 
             {/* Google */}
-            <button className="google-btn" type="button">
+            <button
+              className="w-100 flex items-center justify-center gap-2.5 py-[11px] px-5 bg-cyan-500/[0.05] border border-cyan-500/20 text-sky-200/75 text-[13px] font-medium cursor-pointer transition-all duration-200 hover:bg-cyan-500/10 hover:border-cyan-500/40 hover:text-white mb-6"
+              type="button"
+            >
               <IconGoogle />
               Continue with Google
             </button>
 
-            <div className="divider">
-              <div className="div-line" />
-              <span className="div-text">or with email</span>
-              <div className="div-line" />
+            <div className="flex items-center gap-2.5 mb-6">
+              <div className="flex-1 h-px bg-cyan-500/12" />
+              <span className="text-[11px] color text-sky-200/25 tracking-wider uppercase">
+                or with email
+              </span>
+              <div className="flex-1 h-px bg-cyan-500/12" />
             </div>
 
             {/* fields */}
-            <div className="section-label">Profile details</div>
-            <div className="field-group">
-              <div className="field">
-                <label htmlFor="name">
-                  Full name <span className="req">*</span>
+            <div className="text-[10px] font-semibold text-cyan-500/50 tracking-[0.14em] uppercase mb-4">
+              Profile details
+            </div>
+            <div className="flex flex-col gap-3.5">
+              <div className="flex flex-col gap-1.5">
+                <label
+                  htmlFor="name"
+                  className="text-[12px] font-medium text-sky-200/55 flex items-center gap-0.5"
+                >
+                  Full name <span className="text-cyan-500">*</span>
                 </label>
-                <div className="input-wrap">
-                  <span className="in-icon">
+                <div className="relative flex items-center">
+                  <span className="absolute left-3 text-cyan-500/40 flex pointer-events-none">
                     <IconUser />
                   </span>
                   <input
@@ -674,16 +362,20 @@ export default function WanderlustSignup() {
                     type="text"
                     placeholder="John Doe"
                     required
+                    className="w-100 py-2.5 pl-9 pr-3 bg-cyan-500/[0.05] border border-cyan-500/15 text-sky-100 text-[13.5px] font-light outline-none transition-all duration-200 placeholder:text-sky-200/18 rounded-none focus:border-cyan-500/55 focus:bg-cyan-500/[0.08] focus:ring-4 focus:ring-cyan-500/10"
                   />
                 </div>
               </div>
 
-              <div className="field">
-                <label htmlFor="email">
-                  Email address <span className="req">*</span>
+              <div className="flex flex-col gap-1.5">
+                <label
+                  htmlFor="email"
+                  className="text-[12px] font-medium text-sky-200/55 flex items-center gap-0.5"
+                >
+                  Email address <span className="text-cyan-500">*</span>
                 </label>
-                <div className="input-wrap">
-                  <span className="in-icon">
+                <div className="relative flex items-center">
+                  <span className="absolute left-3 text-cyan-500/40 flex pointer-events-none">
                     <IconMail />
                   </span>
                   <input
@@ -692,16 +384,20 @@ export default function WanderlustSignup() {
                     type="email"
                     placeholder="john@example.com"
                     required
+                    className="w-100 py-2.5 pl-9 pr-3 bg-cyan-500/[0.05] border border-cyan-500/15 text-sky-100 text-[13.5px] font-light outline-none transition-all duration-200 placeholder:text-sky-200/18 rounded-none focus:border-cyan-500/55 focus:bg-cyan-500/[0.08] focus:ring-4 focus:ring-cyan-500/10"
                   />
                 </div>
               </div>
 
-              <div className="field">
-                <label htmlFor="password">
-                  Password <span className="req">*</span>
+              <div className="flex flex-col gap-1.5">
+                <label
+                  htmlFor="password"
+                  className="text-[12px] font-medium text-sky-200/55 flex items-center gap-0.5"
+                >
+                  Password <span className="text-cyan-500">*</span>
                 </label>
-                <div className="input-wrap">
-                  <span className="in-icon">
+                <div className="relative flex items-center">
+                  <span className="absolute left-3 text-cyan-500/40 flex pointer-events-none">
                     <IconLock />
                   </span>
                   <input
@@ -712,11 +408,11 @@ export default function WanderlustSignup() {
                     required
                     value={pw}
                     onChange={(e) => setPw(e.target.value)}
-                    style={{ paddingRight: 38 }}
+                    className="w-100 py-2.5 pl-9 pr-9 bg-cyan-500/[0.05] border border-cyan-500/15 text-sky-100 text-[13.5px] font-light outline-none transition-all duration-200 placeholder:text-sky-200/18 rounded-none focus:border-cyan-500/55 focus:bg-cyan-500/[0.08] focus:ring-4 focus:ring-cyan-500/10"
                   />
                   <button
                     type="button"
-                    className="eye-toggle"
+                    className="absolute right-3 bg-none border-none text-cyan-500/30 cursor-pointer flex p-0 transition-colors duration-150 hover:text-cyan-400"
                     onClick={() => setShowPw((v) => !v)}
                     aria-label={showPw ? "Hide password" : "Show password"}
                   >
@@ -724,40 +420,52 @@ export default function WanderlustSignup() {
                   </button>
                 </div>
                 <StrengthBar password={pw} />
-                <span className="field-hint">
+                <span className="text-[11px] text-sky-200/25 leading-normal">
                   Min 8 chars · 1 uppercase · 1 number
                 </span>
               </div>
             </div>
 
             {/* terms */}
-            <div className="terms">
-              <input type="checkbox" id="terms" />
+            <div className="mt-4.5 flex items-start gap-2 text-[12px] text-sky-200/35 leading-normal">
+              <input
+                type="checkbox"
+                id="terms"
+                className="w-3.5 h-3.5 p-0 mt-0.5 accent-cyan-500 shrink-0"
+              />
               <label
                 htmlFor="terms"
-                style={{
-                  fontSize: 12,
-                  color: "rgba(186,230,253,0.35)",
-                  fontWeight: 400,
-                }}
+                className="text-[12px] text-sky-200/35 font-light"
               >
-                I agree to the <a href="#">Terms of Service</a> and{" "}
-                <a href="#">Privacy Policy</a>
+                I agree to the{" "}
+                <a href="#" className="text-cyan-400 hover:underline">
+                  Terms of Service
+                </a>{" "}
+                and{" "}
+                <a href="#" className="text-cyan-400 hover:underline">
+                  Privacy Policy
+                </a>
               </label>
             </div>
 
             {/* submit */}
-            <button type="submit" className="submit-btn">
+            <button
+              type="submit"
+              className="mt-5.5 w-100 flex items-center justify-center gap-2 py-3 px-6 bg-cyan-500 text-[#042c53] text-[13px] font-bold tracking-wider uppercase cursor-pointer transition-all duration-200 hover:bg-cyan-400 hover:-translate-y-0.5 hover:shadow-[0_6px_24px_rgba(6,182,212,0.3)] active:translate-y-0 active:shadow-none"
+            >
               <IconCompass />
               Create Account
             </button>
 
-            <div className="security-note">
-              <IconShield /> 256-bit SSL encrypted · Safe & secure
+            <div className="flex items-center justify-center gap-1.5 mt-4 text-[11px] text-sky-200/20">
+              <span className="opacity-45">
+                <IconShield />
+              </span>{" "}
+              256-bit SSL encrypted · Safe & secure
             </div>
           </form>
         </div>
       </div>
-    </>
+    </div>
   );
 }
