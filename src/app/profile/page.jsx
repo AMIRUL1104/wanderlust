@@ -127,7 +127,7 @@ function Profile() {
                   Explorer ID
                 </div>
                 <div className="text-[12px] font-mono text-cyan-400/80 tracking-tight mt-0.5 break-all">
-                  {userInfo?.id || "6a081a3ad204e0e917eface3"}
+                  {userInfo?.id}
                 </div>
               </div>
             </div>
@@ -138,7 +138,7 @@ function Profile() {
                 Full name
               </div>
               <div className="text-[14.5px] font-medium text-white">
-                {userInfo?.name || "Jomir"}
+                {userInfo?.name}
               </div>
             </div>
 
@@ -148,7 +148,7 @@ function Profile() {
                 Email address
               </div>
               <div className="text-[14.5px] font-medium text-sky-100 flex items-center gap-2">
-                {userInfo?.email || "jomir.e@gmail.com"}
+                {userInfo?.email}
 
                 {userInfo?.emailVerified ? (
                   <span className="text-[9px] font-semibold bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 py-0.5 px-1.5 uppercase tracking-wide">
@@ -170,7 +170,7 @@ function Profile() {
               <div className="text-[13.5px] text-sky-200/70 font-light">
                 {userInfo?.createdAt
                   ? new Date(userInfo.createdAt).toDateString()
-                  : "Sat May 16 2026"}
+                  : "Unknown"}
               </div>
             </div>
           </div>

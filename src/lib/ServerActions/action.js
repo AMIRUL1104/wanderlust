@@ -1,4 +1,6 @@
 import { redirect } from "next/navigation";
+import { toast } from "react-toastify";
+import { authClient } from "../auth-client";
 
 export default async function AddDestination(formData) {
   "use server";
@@ -23,6 +25,7 @@ export default async function AddDestination(formData) {
 
   // try-catch এর বাইরে redirect
   if (result.insertedId) {
+    toast.success("Destination added successfully!");
     redirect("/");
   }
 
@@ -53,24 +56,6 @@ export async function Updatedestination(id, formData) {
   return res;
 }
 
-// export async function Deletedestination(destinationId) {
-//   "use server";
-//   const req = await fetch(
-//     `http://localhost:4000/destination/${destinationId}`,
-//     {
-//       method: "DELETE",
-//       headers: {
-//         "Content-type": "application/json",
-//       },
-//     },
-//   );
-//   const res = await req.json();
-
-//   if (res.deletedCount > 0) {
-//     redirect("/destinations");
-//   }
-//   return res;
-// }
 export async function Deletedestination(destinationId) {
   "use server";
 
@@ -106,4 +91,33 @@ export async function Deletedestination(destinationId) {
     console.error("Delete error:", error);
     return { error: "Something went wrong while deleting!", deletedCount: 0 };
   }
+}
+
+export async function AddBooking(bookingData) {
+  "use server";
+
+  console.log("Booking data received in server action:", bookingData);
+
+  let result;
+
+  try {
+    const response = await fetch("http://localhost:4000/booking", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bookingData),
+    });
+
+    result = await response.json();
+  } catch (error) {
+    return { error: "Something went wrong!" };
+  }
+
+  // try-catch এর বাইরে redirect
+  if (result.insertedId) {
+    redirect("/my-booking");
+  }
+
+  return result;
 }

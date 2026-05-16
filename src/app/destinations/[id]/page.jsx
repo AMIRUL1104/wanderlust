@@ -17,6 +17,8 @@ import {
 import { Updatedestination } from "@/lib/ServerActions/action";
 import DeleteDestinationBbtn from "@/components/Destination/DeleteDestinationBbtn";
 import { Deletedestination } from "@/lib/ServerActions/action";
+import { AddBooking } from "@/lib/ServerActions/action";
+
 import BookingButton from "@/components/Booking/BookingButton";
 async function DestinationDetailsPage({ params }) {
   const { id } = await params;
@@ -194,7 +196,7 @@ async function DestinationDetailsPage({ params }) {
             {/* <button className="w-full flex items-center justify-center gap-2 bg-cyan-500 hover:bg-cyan-600 text-white text-sm font-semibold py-2.5 rounded-xl transition-colors">
               Book Now <FiArrowRight size={15} />
             </button> */}
-            <BookingButton bookingData={bookingData} />
+            <BookingButton bookingData={bookingData} AddBooking={AddBooking} />
 
             {/* Perks */}
             <div className="space-y-2 pt-1">
