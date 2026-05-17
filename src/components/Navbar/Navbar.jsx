@@ -30,6 +30,7 @@ const mainLinks = [
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [mounted, setMounted] = useState(false);
   const pathname = usePathname();
   const menuRef = useRef(null);
 
@@ -63,6 +64,10 @@ export default function Navbar() {
       document.body.style.overflow = "";
     };
   }, [menuOpen]);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const isActive = (href) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
@@ -124,55 +129,57 @@ export default function Navbar() {
             </Link>
 
             {/* ── Right nav (desktop) ── */}
-            <nav className="hidden lg:flex items-center gap-1">
-              {/* Sign In */}
-              {isPending ? (
-                <div className="flex  items-center gap-2">
-                  <Spinner size="lg" />
-                  <span className="text-base text-cyan-400 font-medium">
-                    Loading...
-                  </span>
-                </div>
-              ) : userInfo ? (
-                <div className="flex items-center justify-between gap-4 ">
-                  <Link href={"/profile"}>
-                    <BiUserCircle className="text-4xl text-cyan-400" />
-                  </Link>
-                  <button
-                    onClick={async () => {
-                      const result = await authClient.signOut();
-                      if (result.data) {
-                        redirect("/");
-                      }
-                      toast.success("Sign Out Successfully", {
-                        position: "top-right",
-                        autoClose: 3000,
-                        hideProgressBar: true,
-                        closeOnClick: true,
-                        pauseOnHover: false,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "light",
-                        transition: Bounce,
-                      });
-                    }}
-                    className=" rounded-lgflex items-center gap-1.5 ml-2 px-4 py-2 text-sm font-medium tracking-wide bg-cyan-500 hover:bg-cyan-400 text-[#042c53] transition-colors duration-200"
-                  >
-                    Sign out
-                  </button>
-                </div>
-              ) : (
-                <div className="flex items-center justify-between gap-4 ">
-                  <Link
-                    href="/login"
-                    className="flex items-center gap-1.5 ml-2 px-4 py-2 text-sm font-medium tracking-wide bg-cyan-500 hover:bg-cyan-400 text-[#042c53] transition-colors duration-200"
-                  >
-                    <IoLogInOutline className="text-base" />
-                    Sign In
-                  </Link>
-                </div>
-              )}
-            </nav>
+
+            {/* Sign In */}
+
+            {!mounted ? (
+              <div className="w-[120px]" />
+            ) : isPending ? (
+              <div className="flex  items-center gap-2">
+                <Spinner size="lg" />
+                <span className="text-base text-cyan-400 font-medium">
+                  Loading...
+                </span>
+              </div>
+            ) : userInfo ? (
+              <div className="flex items-center justify-between gap-4 ">
+                <Link href={"/profile"}>
+                  <BiUserCircle className="text-4xl text-cyan-400" />
+                </Link>
+                <button
+                  onClick={async () => {
+                    const result = await authClient.signOut();
+                    if (result.data) {
+                      redirect("/");
+                    }
+                    toast.success("Sign Out Successfully", {
+                      position: "top-right",
+                      autoClose: 3000,
+                      hideProgressBar: true,
+                      closeOnClick: true,
+                      pauseOnHover: false,
+                      draggable: true,
+                      progress: undefined,
+                      theme: "light",
+                      transition: Bounce,
+                    });
+                  }}
+                  className=" rounded-lgflex items-center gap-1.5 ml-2 px-4 py-2 text-sm font-medium tracking-wide bg-cyan-500 hover:bg-cyan-400 text-[#042c53] transition-colors duration-200"
+                >
+                  Sign out
+                </button>
+              </div>
+            ) : (
+              <div className="flex items-center justify-between gap-4 ">
+                <Link
+                  href="/login"
+                  className="flex items-center gap-1.5 ml-2 px-4 py-2 text-sm font-medium tracking-wide bg-cyan-500 hover:bg-cyan-400 text-[#042c53] transition-colors duration-200"
+                >
+                  <IoLogInOutline className="text-base" />
+                  Sign In
+                </Link>
+              </div>
+            )}
 
             {/* ── Hamburger (mobile/tablet) ── */}
             <button
@@ -210,20 +217,6 @@ export default function Navbar() {
       >
         {/* Drawer header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-cyan-500/15">
-          {/* <div
-            style={{
-              filter:
-                "drop-shadow(0 0 8px rgba(6,182,212,0.5)) brightness(0) saturate(100%) invert(78%) sepia(60%) saturate(400%) hue-rotate(155deg) brightness(105%)",
-            }}
-          >
-            <Image
-              src="/assets/Wanderlast.png"
-              alt="Wanderlast logo"
-              width={100}
-              height={40}
-              className="object-contain h-8 w-auto"
-            />
-          </div> */}
           <button
             className="flex items-center justify-center w-8 h-8 text-blue-200/60 hover:text-cyan-300 hover:bg-cyan-500/10 transition-all"
             aria-label="Close menu"

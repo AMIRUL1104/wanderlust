@@ -1,5 +1,7 @@
+import BookingDeleteButton from "@/components/Booking/BookingDeleteButton";
 import { auth } from "@/lib/auth";
 import { authClient } from "@/lib/auth-client";
+import { DeleteBooking } from "@/lib/ServerActions/action";
 import { getBooking, getBookingById } from "@/lib/ServerActions/data";
 import { headers } from "next/headers";
 import Link from "next/link";
@@ -40,23 +42,6 @@ const IconTicket = () => (
   </svg>
 );
 
-const IconTrash = () => (
-  <svg
-    width="14"
-    height="14"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <path d="M3 6h18" />
-    <path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6" />
-    <path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2" />
-  </svg>
-);
-
 const IconEye = () => (
   <svg
     width="14"
@@ -81,7 +66,7 @@ async function MyBookingPage() {
   const userInfo = session?.user;
   const userId = userInfo?.id;
   const BookingData = await getBookingById(userId);
-  console.log(BookingData);
+  // console.log(BookingData);
 
   // যদিকোনো ডেটা না থাকে, তার জন্য একটি সেফগার্ড অ্যারে
   const bookings = Array.isArray(BookingData) ? BookingData : [];
@@ -192,13 +177,10 @@ async function MyBookingPage() {
 
                       {/* Buttons */}
                       <div className="flex items-center gap-2.5">
-                        <button
-                          type="button"
-                          className="flex items-center gap-1.5 px-4 py-2 border border-red-200 text-red-500 text-[13px] font-medium rounded transition-colors duration-150 hover:bg-red-50 cursor-pointer"
-                        >
-                          <IconTrash />
-                          Cancel
-                        </button>
+                        <BookingDeleteButton
+                          bookingId={booking._id}
+                          DeleteBooking={DeleteBooking}
+                        />
 
                         <Link
                           href={`/destinations/${booking.bookingId || booking._id}`}

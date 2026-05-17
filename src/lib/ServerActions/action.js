@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { toast } from "react-toastify";
 import { authClient } from "../auth-client";
+import { revalidatePath } from "next/cache";
 
 export default async function AddDestination(formData) {
   "use server";
@@ -96,7 +97,7 @@ export async function Deletedestination(destinationId) {
 export async function AddBooking(bookingData) {
   "use server";
 
-  console.log("Booking data received in server action:", bookingData);
+  // console.log("Booking data received in server action:", bookingData);
 
   let result;
 
@@ -120,4 +121,43 @@ export async function AddBooking(bookingData) {
   }
 
   return result;
+}
+
+export async function DeleteBooking(bookingId) {
+  "use server";
+
+  try {
+    if (!bookingId) {
+      return { error: "Booking ID is required", deletedCount: 0 };
+    }
+
+    const res = await fetch(`http://localhost:4000/booking/${bookingId}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!res.ok) {
+      return {
+        error: `Failed to delete booking: ${res.statusText}`,
+        deletedCount: 0,
+      };
+    }
+
+    const result = await res.json();
+    if (result.deletedCount > 0) {
+      revalidatePath("/my-booking");
+    }
+
+    console.log("delete : ", result);
+
+    return {
+      ...result,
+      deletedCount: result.deletedCount || 0,
+    };
+  } catch (error) {
+    console.error("Delete error:", error);
+    return { error: "Something went wrong while deleting!", deletedCount: 0 };
+  }
 }
